@@ -136,6 +136,23 @@ app.get('/post/:id', async (req, res) => {
   res.json(postDoc);
 })
 
+app.delete('/post/:id', async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    const deletedPost = await Post.findByIdAndRemove(postId);
+
+    if (!deletedPost) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    return res.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(4000,() => {
   console.log("server running on port 4000")
 });

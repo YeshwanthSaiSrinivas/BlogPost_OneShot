@@ -3,10 +3,12 @@ import {useParams} from "react-router-dom";
 import {formatISO9075} from "date-fns";
 import {UserContext} from "../UserContext";
 import {Link} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 
 export default function PostPage() {
   const [postInfo,setPostInfo] = useState(null);
   const {userInfo} = useContext(UserContext);
+  const [isDeletePost, setDeletePost] = useState(false);
   const {id} = useParams();
   useEffect(() => {
     fetch(`http://localhost:4000/post/${id}`)
@@ -17,6 +19,26 @@ export default function PostPage() {
       });
   }, []);
 
+  async function deletedPost() {
+    const response = await fetch(`http://localhost:4000/post/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (response.ok) {
+      // setPostInfo(null);
+      alert('Post deleted successfully');
+      setDeletePost(true);
+    }
+    else{
+      alert('Post not deleted');
+    }
+  }
+
+  if (isDeletePost) {
+    console.log('Delete post');
+    return <Navigate to={'/'} />;
+  }
+  
   if (!postInfo) return '';
 
   return (
@@ -32,6 +54,7 @@ export default function PostPage() {
             </svg>
             Edit this post
           </Link>
+          <button onClick={deletedPost}>Delete Blog</button>
         </div>
       )}
       <div className="image">

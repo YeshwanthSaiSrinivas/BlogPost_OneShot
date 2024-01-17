@@ -68,21 +68,21 @@ app.post('/logout', (req,res) => {
 });
 
 app.post('/post', uploadMiddleware.single('file'), async (req,res) => {
-  const {originalname,path} = req.file;
-  const parts = originalname.split('.');
-  const ext = parts[parts.length - 1];
-  const newPath = path+'.'+ext;
-  fs.renameSync(path, newPath);
+  // const {originalname,path} = req.file;
+  // const parts = originalname.split('.');
+  // const ext = parts[parts.length - 1];
+  // const newPath = path+'.'+ext;
+  // fs.renameSync(path, newPath);
 
   const {token} = req.cookies;
   jwt.verify(token, secret, {}, async (err,info) => {
     if (err) throw err;
-    const {title,summary,content} = req.body;
+    const {title,summary,content,cover} = req.body;
     const postDoc = await Post.create({
       title,
       summary,
       content,
-      cover:newPath,
+      cover:cover,
       author:info.id,
     });
     res.json(postDoc);
@@ -91,19 +91,11 @@ app.post('/post', uploadMiddleware.single('file'), async (req,res) => {
 });
 
 app.put('/post',uploadMiddleware.single('file'), async (req,res) => {
-  let newPath = null;
-  if (req.file) {
-    const {originalname,path} = req.file;
-    const parts = originalname.split('.');
-    const ext = parts[parts.length - 1];
-    newPath = path+'.'+ext;
-    fs.renameSync(path, newPath);
-  }
 
   const {token} = req.cookies;
   jwt.verify(token, secret, {}, async (err,info) => {
     if (err) throw err;
-    const {id,title,summary,content} = req.body;
+    const {id,title,summary,content,cover} = req.body;
     const postDoc = await Post.findById(id);
     const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
     if (!isAuthor) {
@@ -113,7 +105,7 @@ app.put('/post',uploadMiddleware.single('file'), async (req,res) => {
       title,
       summary,
       content,
-      cover: newPath ? newPath : postDoc.cover,
+      cover: cover ? cover : postDoc.cover,
     });
 
     res.json(postDoc);

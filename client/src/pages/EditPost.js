@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {Navigate, useParams} from "react-router-dom";
+import axios from 'axios';
 import Editor from "../Editor";
 
 export default function EditPost() {
@@ -31,15 +32,28 @@ export default function EditPost() {
     if (files?.[0]) {
       data.set('file', files?.[0]);
     }
-    const response = await fetch('http://localhost:4000/post', {
-      method: 'PUT',
-      body: data,
-      credentials: 'include',
-    });
-    if (response.ok) {
-      setRedirect(true);
+    const formData = new FormData();
+    formData.append("file",files[0]);
+    formData.append("upload_preset","toxzyuph");
+    try {
+      const url="https://api.cloudinary.com/v1_1/dgwycpv3z/image/upload"
+      const res = await axios.post(url,formData);
+      data.set('cover',res.data.url);
+      const response = await fetch('http://localhost:4000/post', {
+        method: 'PUT',
+        body: data,
+        credentials: 'include',
+      });
+      if (response.ok) {
+        setRedirect(true);
+      }
+    } catch (error) {
+      console.log(error);
     }
+
+    
   }
+
 
   if (redirect) {
     return <Navigate to={'/post/'+id} />

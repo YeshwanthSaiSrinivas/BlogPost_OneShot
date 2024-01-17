@@ -93,6 +93,7 @@ button{
     color: #fff;
     border-radius: 5px;
     padding: 7px 0;
+    /* padding-bottom: 5px; */
 }
 form.login h1, form.register h1{
     text-align: center;

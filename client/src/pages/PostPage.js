@@ -38,7 +38,7 @@ export default function PostPage() {
     console.log('Delete post');
     return <Navigate to={'/'} />;
   }
-  
+
   if (!postInfo) return '';
 
   return (
@@ -54,13 +54,14 @@ export default function PostPage() {
             </svg>
             Edit this post
           </Link>
-          <button onClick={deletedPost}>Delete Blog</button>
         </div>
       )}
       <div className="image">
-        <img src={`http://localhost:4000/${postInfo.cover}`} alt=""/>
+        <img src={postInfo.cover} alt=""/>
       </div>
       <div className="content" dangerouslySetInnerHTML={{__html:postInfo.content}} />
+      {userInfo.id === postInfo.author._id && (<button onClick={deletedPost}>Delete Blog</button>)}
+      
     </div>
   );
 }
